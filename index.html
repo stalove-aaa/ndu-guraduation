@@ -200,11 +200,11 @@ select option{background:#1e293b}
             <div class="step-num">1</div>
             <div>
               <div class="step-title">🏫 学部・入学年度を選ぶ</div>
-              <div class="step-desc">画面上部のセレクトボックスで自分の<strong>学部・学科</strong>と<strong>入学年度</strong>を選択してください。学部を変えると卒業要件の項目が自動で切り替わります。</div>
+              <div class="step-desc">画面上部のセレクトボックスで自分の<strong>学部・学科</strong>と<strong>入学年度</strong>を選択してください。学部を変えると卒業要件の項目が自動で切り替わります。商学部は2025年度入学から新カリキュラムが適用されます。</div>
               <div class="step-chips">
                 <span class="step-chip">法学部</span>
                 <span class="step-chip">経済学部</span>
-                <span class="step-chip">理工学部 など</span>
+                <span class="step-chip">商学部 など</span>
               </div>
             </div>
           </div>
@@ -292,7 +292,7 @@ select option{background:#1e293b}
       <!-- 注意事項 -->
       <div class="warn-box">
         ⚠️ <strong>ご注意</strong><br>
-        このツールは公式の履修細則をもとに作成していますが、科目の細かい条件（選択必修の選び方・重複充当ルール等）は学科・コースによって異なります。正確な単位管理は必ず<strong>MYTG</strong>および<strong>教務課</strong>にてご確認ください。
+        このツールは日本大学各学部の公式学部要覧（2021〜2026年度版）をもとに作成しています。<strong>商学部</strong>は2025〜2026年度入学は新カリキュラム（履修モデル制、専門76単位）、2024年度以前は旧カリキュラム（コース制、専門74単位）に対応しています。科目の細かい条件（選択必修の選び方・重複充当ルール等）は学科・コースによって異なります。正確な単位管理は必ず<strong>学部要覧</strong>および<strong>教務課・学生ポータル</strong>にてご確認ください。
       </div>
 
     </div><!-- /help-body -->
@@ -338,8 +338,9 @@ select option{background:#1e293b}
     <div>
       <span class="sel-label">入学年度</span>
       <select id="entryYear" onchange="renderAll()">
-        <option value="2022" selected>2022年度以降</option>
-        <option value="2019">2019〜2021年度</option>
+        <option value="2025">2025〜2026年度（新）</option>
+        <option value="2022" selected>2022〜2024年度</option>
+        <option value="2019">2021年度以前</option>
       </select>
     </div>
   </div>
@@ -349,7 +350,7 @@ select option{background:#1e293b}
 
 
 <div class="footer-note">
-  ※ このツールは日本大学各学部の公式学部要覧をもとに作成していますが、正確な単位管理は各学部教務課および「自主創造支援サイト」にてご確認ください。GPA計算は日本大学公式方式（S=4, A=3, B=2, C=1, D=0）に基づきます。
+  ※ このツールは日本大学各学部の公式学部要覧（2021〜2026年度版）をもとに作成しています。商学部は2025〜26年度入学は新カリキュラム、2024年度以前は旧カリキュラム（コース制）に対応。正確な単位管理は各学部教務課および学生ポータルにてご確認ください。GPA計算は日本大学公式方式（S=4, A=3, B=2, C=1, D=0）に基づきます。
 </div>
 
 <script>
@@ -641,89 +642,340 @@ const REQS = {
   // 卒業要件: 124単位
   // 総合科目20 + 外国語(英8+第二6) + スポーツ健康2 + 専門(必修+選択) + 自由
   // ─────────────────────────────
+  // ─────────────────────────────
+  // 商学部（3学科共通）
+  // 卒業要件: 124単位
+  //
+  // ▼2025〜2026年度入学（新カリキュラム・履修モデル制）
+  //   総合36 + 専門76（基礎必修10+基礎選択必修8+Ⅰ類38+Ⅱ類20）+ 自由12 = 124
+  //   ※全学共通教育は自由選択枠に充当（卒業要件の別枠ではない）
+  //
+  // ▼2022〜2024年度入学（旧カリキュラム・コース制）
+  //   全学共通2 + 総合20 + 外国語14 + スポーツ2 + 専門基礎16 + 学科所属22 + コース専門18 + 専門選択18 + 自由12 = 124
+  // ─────────────────────────────
   bus_shogyo: {
     name: "商学部・商業学科",
+    2025: { total:124, gpa_style:"SABC",
+      sections:[
+        {id:"sogo", title:"総合科目（20単位）", items:[
+          {id:"sogo_all", label:"総合科目（人文・社会・自然系）", req:20},
+        ], note:"20単位修得必須。20単位超過分は自由選択に充当。"},
+        {id:"gaigo1", title:"第１外国語・英語（8単位）", items:[
+          {id:"eigo", label:"英語1〜8（必修・自動登録）", req:8},
+        ], note:"英語1〜4（1年次）・英語5〜8（2年次）の計8単位。単位未修得は翌年度に自動再登録。"},
+        {id:"gaigo2", title:"第２外国語（6単位）", items:[
+          {id:"daini", label:"第2外国語（独・仏・西・中・韓から入学時に1カ国語決定）", req:6},
+        ], note:"入学時に決定した1カ国語を変更不可。自動登録。"},
+        {id:"sports", title:"スポーツ科目（2単位）", items:[
+          {id:"sports_all", label:"スポーツA（1年次）・スポーツB（2年次）", req:2},
+        ], note:"必修だが自動登録ではない。抽選で申し込みが必要。"},
+        {id:"senki", title:"専門基礎・必修（10単位）", items:[
+          {id:"senki_hissu", label:"マーケティング入門1・経営学入門1・会計学入門1・経済学入門1・簿記入門（各2単位）", req:10},
+        ], note:"5科目10単位すべて1年次必修。自動登録。卒業までに修得が必須。"},
+        {id:"senkis", title:"専門基礎・選択必修（8単位）", items:[
+          {id:"senki_sentaku", label:"専門基礎科目（選択必修）11科目から8単位選択", req:8},
+        ], note:"マーケティング入門2・経営学入門2・会計学入門2・経済学入門2・ビジネス法務入門・金融入門・経済ビジネス数学入門・ビジネス統計入門・キャリアデザイン入門・コンピュータリテラシーA・Bから選択。8単位超過分はⅡ類へ充当。"},
+        {id:"itori", title:"Ⅰ類・商業学科専門科目（38単位）", items:[
+          {id:"itori_all", label:"商業学科Ⅰ類科目（マーケティング・貿易・金融・経済系など）", req:38},
+        ], note:"2〜3年次配当。マーケティング論・消費者行動論・流通システム論・金融論・貿易論・国際ビジネス・ミクロ/マクロ経済学など。38単位超過分はⅡ類へ充当。"},
+        {id:"nitori", title:"Ⅱ類・共通専門科目（20単位）", items:[
+          {id:"nitori_all", label:"Ⅱ類（ゼミ・プロジェクト研究・他学科Ⅰ類・専門基礎超過分など）", req:20},
+        ], note:"専門ゼミナール1・2（各4単位）、卒業論文（6単位）、プロジェクト研究（4科目8単位まで）など。20単位超過分は自由選択へ。"},
+        {id:"jiyu", title:"自由選択（12単位）", items:[
+          {id:"jiyu_all", label:"自由選択（全学共通・総合超過・Ⅱ類超過・英会話・外国語会話等）", req:12},
+        ], note:"全学共通教育科目（自主創造の基礎2単位・日本を考える2単位）もここに充当。"},
+      ]
+    },
     2022: { total:124, gpa_style:"SABC",
       sections:[
-        {id:"zengaku", title:"全学共通教育科目", items:[
+        {id:"zengaku", title:"全学共通教育科目（2単位）", items:[
           {id:"jishu12", label:"自主創造の基礎（必修）", req:2},
-        ]},
-        {id:"sogo", title:"総合科目", items:[
+        ], note:"1年次必修。「日本を考える」（2単位）は任意選択で自由選択枠へ充当。"},
+        {id:"sogo", title:"総合科目（20単位）", items:[
           {id:"sogo_all", label:"総合科目（人文・社会・自然）", req:20},
-        ], note:"20単位以上必要。"},
-        {id:"gaigo", title:"外国語科目", items:[
-          {id:"eigo",  label:"第1外国語・英語（必修）", req:8},
-          {id:"daini", label:"第2外国語（仏・独・西・中・韓から1カ国語）", req:6},
-        ], note:"英語8単位＋第2外国語6単位、計14単位。"},
-        {id:"hoken", title:"スポーツ・健康科目", items:[
-          {id:"hoken_all", label:"スポーツ・健康科目", req:2},
         ]},
-        {id:"senmon", title:"専門教育科目", items:[
-          {id:"sen_hissu",  label:"必修科目（商業学概論等）", req:16},
-          {id:"sen_hissm",  label:"選択必修科目（コース）", req:24},
-          {id:"sen_sentaku", label:"選択科目", req:22},
-        ], note:"商業学科 専門合計62単位以上。"},
-        {id:"jiyu", title:"自由選択", items:[
-          {id:"jiyu_all", label:"自由選択（余剰・相互履修等）", req:22},
+        {id:"gaigo1", title:"第１外国語・英語（8単位）", items:[
+          {id:"eigo", label:"英語（必修）", req:8},
+        ]},
+        {id:"gaigo2", title:"第２外国語（6単位）", items:[
+          {id:"daini", label:"第2外国語（独・仏・西・中・韓から1カ国語）", req:6},
+        ]},
+        {id:"sports", title:"スポーツ科目（2単位）", items:[
+          {id:"sports_all", label:"スポーツA・B（必修）", req:2},
+        ]},
+        {id:"senki_h", title:"専門基礎・必修（8単位）", items:[
+          {id:"senki_hissu", label:"専門基礎科目必修（商学入門1・経営学入門1・会計学入門1等）", req:8},
+        ], note:"1年次に必ず履修。商学入門1・2（商業学科系）、経営学入門1、会計学入門1、簿記入門などから学科ごとに指定科目が異なる。"},
+        {id:"senki_s", title:"専門基礎・選択必修（8単位）", items:[
+          {id:"senki_sentaku", label:"専門基礎科目選択必修（キャリアデザイン入門・統計・コンピュータ系など）", req:8},
+        ]},
+        {id:"gakka", title:"学科所属科目（22単位）", items:[
+          {id:"gakka_all", label:"商業学科所属科目（マーケティング・貿易・金融・経済系）", req:22},
+        ], note:"2年次以降。マーケティング論・消費者行動論・流通システム論・貿易論・金融論・ミクロ/マクロ経済学等。"},
+        {id:"course_sp", title:"コース専門科目（18単位）", items:[
+          {id:"course_all", label:"選択コースの専門科目（3コースから1つ選択）", req:18},
+        ], note:"商業学科は3コース：マーケティング・グローバルビジネス・金融エコノミー。2年次進級時に選択。"},
+        {id:"senmon_s", title:"専門選択科目（18単位）", items:[
+          {id:"senmon_all", label:"専門選択科目（ゼミ・プロジェクト研究・特殊講義等）", req:18},
+        ], note:"専門ゼミナール（4単位×2）・卒業論文（6単位）を含む。"},
+        {id:"jiyu", title:"自由選択（12単位）", items:[
+          {id:"jiyu_all", label:"自由選択（英会話・外国語会話・相互履修等）", req:12},
         ]},
       ]
-    }
+    },
+    2019: { total:124, gpa_style:"SABC",
+      sections:[
+        {id:"zengaku", title:"全学共通教育科目（2単位）", items:[
+          {id:"jishu12", label:"自主創造の基礎（必修）", req:2},
+        ]},
+        {id:"sogo", title:"総合科目（20単位）", items:[
+          {id:"sogo_all", label:"総合科目（人文・社会・自然）", req:20},
+        ]},
+        {id:"gaigo1", title:"第１外国語・英語（8単位）", items:[
+          {id:"eigo", label:"英語（必修）", req:8},
+        ]},
+        {id:"gaigo2", title:"第２外国語（6単位）", items:[
+          {id:"daini", label:"第2外国語（独・仏・西・中・韓から1カ国語）", req:6},
+        ]},
+        {id:"sports", title:"スポーツ科目（2単位）", items:[
+          {id:"sports_all", label:"スポーツA・B（必修）", req:2},
+        ]},
+        {id:"senki_h", title:"専門基礎・必修（8単位）", items:[
+          {id:"senki_hissu", label:"専門基礎科目必修", req:8},
+        ]},
+        {id:"senki_s", title:"専門基礎・選択必修（8単位）", items:[
+          {id:"senki_sentaku", label:"専門基礎科目選択必修", req:8},
+        ]},
+        {id:"gakka", title:"学科所属科目（22単位）", items:[
+          {id:"gakka_all", label:"商業学科所属科目", req:22},
+        ]},
+        {id:"course_sp", title:"コース専門科目（18単位）", items:[
+          {id:"course_all", label:"コース専門科目（マーケティング・グローバルビジネス・金融エコノミーから）", req:18},
+        ]},
+        {id:"senmon_s", title:"専門選択科目（18単位）", items:[
+          {id:"senmon_all", label:"専門選択・ゼミナール・卒業論文", req:18},
+        ]},
+        {id:"jiyu", title:"自由選択（12単位）", items:[
+          {id:"jiyu_all", label:"自由選択", req:12},
+        ]},
+      ]
+    },
   },
   bus_keiei: {
     name: "商学部・経営学科",
-    2022: { total:124, gpa_style:"SABC",
+    2025: { total:124, gpa_style:"SABC",
       sections:[
-        {id:"zengaku", title:"全学共通教育科目", items:[
-          {id:"jishu12", label:"自主創造の基礎（必修）", req:2},
+        {id:"sogo", title:"総合科目（20単位）", items:[
+          {id:"sogo_all", label:"総合科目（人文・社会・自然系）", req:20},
+        ], note:"20単位修得必須。20単位超過分は自由選択に充当。"},
+        {id:"gaigo1", title:"第１外国語・英語（8単位）", items:[
+          {id:"eigo", label:"英語1〜8（必修・自動登録）", req:8},
         ]},
-        {id:"sogo", title:"総合科目", items:[
-          {id:"sogo_all", label:"総合科目", req:20},
+        {id:"gaigo2", title:"第２外国語（6単位）", items:[
+          {id:"daini", label:"第2外国語（独・仏・西・中・韓から入学時に決定）", req:6},
         ]},
-        {id:"gaigo", title:"外国語科目", items:[
-          {id:"eigo",  label:"英語（必修）", req:8},
-          {id:"daini", label:"第2外国語（選択必修）", req:6},
+        {id:"sports", title:"スポーツ科目（2単位）", items:[
+          {id:"sports_all", label:"スポーツA・B（必修・抽選申込）", req:2},
         ]},
-        {id:"hoken", title:"スポーツ・健康科目", items:[
-          {id:"hoken_all", label:"スポーツ・健康科目", req:2},
-        ]},
-        {id:"senmon", title:"専門教育科目", items:[
-          {id:"sen_hissu",   label:"必修科目（経営学原理等）", req:16},
-          {id:"sen_hissm",   label:"選択必修科目（コース）", req:24},
-          {id:"sen_sentaku", label:"選択科目", req:20},
-        ]},
-        {id:"jiyu", title:"自由選択", items:[
-          {id:"jiyu_all", label:"自由選択", req:22},
+        {id:"senki", title:"専門基礎・必修（10単位）", items:[
+          {id:"senki_hissu", label:"マーケティング入門1・経営学入門1・会計学入門1・経済学入門1・簿記入門（各2単位）", req:10},
+        ], note:"5科目10単位すべて1年次必修。自動登録。"},
+        {id:"senkis", title:"専門基礎・選択必修（8単位）", items:[
+          {id:"senki_sentaku", label:"専門基礎科目（選択必修）から8単位", req:8},
+        ], note:"マーケティング入門2・経営学入門2・会計学入門2・経済学入門2・ビジネス法務入門・金融入門・経済ビジネス数学入門・ビジネス統計入門・キャリアデザイン入門・コンピュータリテラシーA・Bから選択。"},
+        {id:"itori", title:"Ⅰ類・経営学科専門科目（38単位）", items:[
+          {id:"itori_all", label:"経営学科Ⅰ類科目（経営管理・経営戦略・経営組織・情報系など）", req:38},
+        ], note:"経営管理論・経営戦略論・経営組織論・コーポレートファイナンス・データサイエンス・ベンチャービジネス論・情報ネットワーク論等。38単位超過分はⅡ類へ充当。"},
+        {id:"nitori", title:"Ⅱ類・共通専門科目（20単位）", items:[
+          {id:"nitori_all", label:"Ⅱ類（ゼミ・プロジェクト研究・他学科Ⅰ類・専門基礎超過分）", req:20},
+        ], note:"専門ゼミナール1・2、卒業論文等。20単位超過分は自由選択へ。"},
+        {id:"jiyu", title:"自由選択（12単位）", items:[
+          {id:"jiyu_all", label:"自由選択（全学共通・総合超過・Ⅱ類超過・英会話等）", req:12},
         ]},
       ]
-    }
+    },
+    2022: { total:124, gpa_style:"SABC",
+      sections:[
+        {id:"zengaku", title:"全学共通教育科目（2単位）", items:[
+          {id:"jishu12", label:"自主創造の基礎（必修）", req:2},
+        ]},
+        {id:"sogo", title:"総合科目（20単位）", items:[
+          {id:"sogo_all", label:"総合科目（人文・社会・自然）", req:20},
+        ]},
+        {id:"gaigo1", title:"第１外国語・英語（8単位）", items:[
+          {id:"eigo", label:"英語（必修）", req:8},
+        ]},
+        {id:"gaigo2", title:"第２外国語（6単位）", items:[
+          {id:"daini", label:"第2外国語（独・仏・西・中・韓から1カ国語）", req:6},
+        ]},
+        {id:"sports", title:"スポーツ科目（2単位）", items:[
+          {id:"sports_all", label:"スポーツA・B（必修）", req:2},
+        ]},
+        {id:"senki_h", title:"専門基礎・必修（8単位）", items:[
+          {id:"senki_hissu", label:"専門基礎科目必修（経営学入門1・商学入門1・会計学入門1等）", req:8},
+        ]},
+        {id:"senki_s", title:"専門基礎・選択必修（8単位）", items:[
+          {id:"senki_sentaku", label:"専門基礎科目選択必修", req:8},
+        ]},
+        {id:"gakka", title:"学科所属科目（22単位）", items:[
+          {id:"gakka_all", label:"経営学科所属科目（経営管理・経営戦略・経営組織・情報系）", req:22},
+        ], note:"2年次以降。経営管理論・経営戦略論・経営組織論・コーポレートファイナンス・人的資源管理論等。"},
+        {id:"course_sp", title:"コース専門科目（18単位）", items:[
+          {id:"course_all", label:"選択コースの専門科目（2コースから1つ選択）", req:18},
+        ], note:"経営学科は2コース：マネジメント・事業創造。2年次進級時に選択。"},
+        {id:"senmon_s", title:"専門選択科目（18単位）", items:[
+          {id:"senmon_all", label:"専門選択科目（ゼミ・プロジェクト研究・特殊講義等）", req:18},
+        ]},
+        {id:"jiyu", title:"自由選択（12単位）", items:[
+          {id:"jiyu_all", label:"自由選択（英会話・外国語会話・相互履修等）", req:12},
+        ]},
+      ]
+    },
+    2019: { total:124, gpa_style:"SABC",
+      sections:[
+        {id:"zengaku", title:"全学共通教育科目（2単位）", items:[
+          {id:"jishu12", label:"自主創造の基礎（必修）", req:2},
+        ]},
+        {id:"sogo", title:"総合科目（20単位）", items:[
+          {id:"sogo_all", label:"総合科目（人文・社会・自然）", req:20},
+        ]},
+        {id:"gaigo1", title:"第１外国語・英語（8単位）", items:[
+          {id:"eigo", label:"英語（必修）", req:8},
+        ]},
+        {id:"gaigo2", title:"第２外国語（6単位）", items:[
+          {id:"daini", label:"第2外国語（選択必修）", req:6},
+        ]},
+        {id:"sports", title:"スポーツ科目（2単位）", items:[
+          {id:"sports_all", label:"スポーツA・B", req:2},
+        ]},
+        {id:"senki_h", title:"専門基礎・必修（8単位）", items:[
+          {id:"senki_hissu", label:"専門基礎科目必修", req:8},
+        ]},
+        {id:"senki_s", title:"専門基礎・選択必修（8単位）", items:[
+          {id:"senki_sentaku", label:"専門基礎科目選択必修", req:8},
+        ]},
+        {id:"gakka", title:"学科所属科目（22単位）", items:[
+          {id:"gakka_all", label:"経営学科所属科目", req:22},
+        ]},
+        {id:"course_sp", title:"コース専門科目（18単位）", items:[
+          {id:"course_all", label:"コース専門科目（マネジメント・事業創造から）", req:18},
+        ]},
+        {id:"senmon_s", title:"専門選択科目（18単位）", items:[
+          {id:"senmon_all", label:"専門選択・ゼミナール・卒業論文", req:18},
+        ]},
+        {id:"jiyu", title:"自由選択（12単位）", items:[
+          {id:"jiyu_all", label:"自由選択", req:12},
+        ]},
+      ]
+    },
   },
   bus_kaikei: {
     name: "商学部・会計学科",
-    2022: { total:124, gpa_style:"SABC",
+    2025: { total:124, gpa_style:"SABC",
       sections:[
-        {id:"zengaku", title:"全学共通教育科目", items:[
-          {id:"jishu12", label:"自主創造の基礎（必修）", req:2},
+        {id:"sogo", title:"総合科目（20単位）", items:[
+          {id:"sogo_all", label:"総合科目（人文・社会・自然系）", req:20},
+        ], note:"20単位修得必須。超過分は自由選択に充当。"},
+        {id:"gaigo1", title:"第１外国語・英語（8単位）", items:[
+          {id:"eigo", label:"英語1〜8（必修・自動登録）", req:8},
         ]},
-        {id:"sogo", title:"総合科目", items:[
-          {id:"sogo_all", label:"総合科目", req:20},
+        {id:"gaigo2", title:"第２外国語（6単位）", items:[
+          {id:"daini", label:"第2外国語（独・仏・西・中・韓から入学時に決定）", req:6},
         ]},
-        {id:"gaigo", title:"外国語科目", items:[
-          {id:"eigo",  label:"英語（必修）", req:8},
-          {id:"daini", label:"第2外国語（選択必修）", req:6},
+        {id:"sports", title:"スポーツ科目（2単位）", items:[
+          {id:"sports_all", label:"スポーツA・B（必修・抽選申込）", req:2},
         ]},
-        {id:"hoken", title:"スポーツ・健康科目", items:[
-          {id:"hoken_all", label:"スポーツ・健康科目", req:2},
-        ]},
-        {id:"senmon", title:"専門教育科目", items:[
-          {id:"sen_hissu",   label:"必修科目（簿記・会計学等）", req:18},
-          {id:"sen_hissm",   label:"選択必修科目", req:22},
-          {id:"sen_sentaku", label:"選択科目", req:20},
-        ], note:"会計学科は簿記・税法系の必修が多い。"},
-        {id:"jiyu", title:"自由選択", items:[
-          {id:"jiyu_all", label:"自由選択", req:22},
+        {id:"senki", title:"専門基礎・必修（10単位）", items:[
+          {id:"senki_hissu", label:"マーケティング入門1・経営学入門1・会計学入門1・経済学入門1・簿記入門（各2単位）", req:10},
+        ], note:"会計学科でも全5科目が必修。簿記論Aは1年次から会計学科Ⅰ類として履修推奨。"},
+        {id:"senkis", title:"専門基礎・選択必修（8単位）", items:[
+          {id:"senki_sentaku", label:"専門基礎科目（選択必修）から8単位", req:8},
+        ], note:"会計系では会計学入門2・経済ビジネス数学入門・ビジネス統計入門を優先推奨。"},
+        {id:"itori", title:"Ⅰ類・会計学科専門科目（38単位）", items:[
+          {id:"itori_all", label:"会計学科Ⅰ類科目（簿記論・財務会計論・原価計算論・監査論等）", req:38},
+        ], note:"1〜3年次配当。簿記論A〜D（各4単位）・財務会計論1〜3・原価計算論1〜3・会計監査論・管理会計論・制度会計論等。38単位超過分はⅡ類へ充当。日商簿記2級以上合格者は単位認定制度あり。"},
+        {id:"nitori", title:"Ⅱ類・共通専門科目（20単位）", items:[
+          {id:"nitori_all", label:"Ⅱ類（ゼミ・プロジェクト研究・他学科Ⅰ類・専門基礎超過分）", req:20},
+        ], note:"専門ゼミナール1・2、卒業論文、税務会計論・国際会計論等のⅡ類専用科目。公認会計士・税理士試験合格者は科目免除単位認定あり。"},
+        {id:"jiyu", title:"自由選択（12単位）", items:[
+          {id:"jiyu_all", label:"自由選択（全学共通・総合超過・Ⅱ類超過・英会話等）", req:12},
         ]},
       ]
-    }
+    },
+    2022: { total:124, gpa_style:"SABC",
+      sections:[
+        {id:"zengaku", title:"全学共通教育科目（2単位）", items:[
+          {id:"jishu12", label:"自主創造の基礎（必修）", req:2},
+        ]},
+        {id:"sogo", title:"総合科目（20単位）", items:[
+          {id:"sogo_all", label:"総合科目（人文・社会・自然）", req:20},
+        ]},
+        {id:"gaigo1", title:"第１外国語・英語（8単位）", items:[
+          {id:"eigo", label:"英語（必修）", req:8},
+        ]},
+        {id:"gaigo2", title:"第２外国語（6単位）", items:[
+          {id:"daini", label:"第2外国語（独・仏・西・中・韓から1カ国語）", req:6},
+        ]},
+        {id:"sports", title:"スポーツ科目（2単位）", items:[
+          {id:"sports_all", label:"スポーツA・B（必修）", req:2},
+        ]},
+        {id:"senki_h", title:"専門基礎・必修（8単位）", items:[
+          {id:"senki_hissu", label:"専門基礎科目必修（会計学入門1・簿記入門・経営学入門1等）", req:8},
+        ], note:"会計学科は簿記系の必修が1年次から多い。"},
+        {id:"senki_s", title:"専門基礎・選択必修（8単位）", items:[
+          {id:"senki_sentaku", label:"専門基礎科目選択必修（会計学入門2・統計系等）", req:8},
+        ]},
+        {id:"gakka", title:"学科所属科目（22単位）", items:[
+          {id:"gakka_all", label:"会計学科所属科目（財務会計・原価計算・監査・税務会計系）", req:22},
+        ], note:"2年次以降。財務会計論・原価計算論・会計監査論・管理会計論・制度会計論・コンピュータ会計論等。"},
+        {id:"course_sp", title:"コース専門科目（18単位）", items:[
+          {id:"course_all", label:"選択コースの専門科目（2コースから1つ選択）", req:18},
+        ], note:"会計学科は2コース：アカウンティング・会計専門職。2年次進級時に選択。公認会計士・税理士目標者は会計専門職コースを選択。"},
+        {id:"senmon_s", title:"専門選択科目（18単位）", items:[
+          {id:"senmon_all", label:"専門選択科目（ゼミ・プロジェクト研究・特殊講義等）", req:18},
+        ], note:"日商簿記2級合格→簿記論B（4単位）の単位認定制度あり。"},
+        {id:"jiyu", title:"自由選択（12単位）", items:[
+          {id:"jiyu_all", label:"自由選択（英会話・外国語会話・相互履修等）", req:12},
+        ]},
+      ]
+    },
+    2019: { total:124, gpa_style:"SABC",
+      sections:[
+        {id:"zengaku", title:"全学共通教育科目（2単位）", items:[
+          {id:"jishu12", label:"自主創造の基礎（必修）", req:2},
+        ]},
+        {id:"sogo", title:"総合科目（20単位）", items:[
+          {id:"sogo_all", label:"総合科目（人文・社会・自然）", req:20},
+        ]},
+        {id:"gaigo1", title:"第１外国語・英語（8単位）", items:[
+          {id:"eigo", label:"英語（必修）", req:8},
+        ]},
+        {id:"gaigo2", title:"第２外国語（6単位）", items:[
+          {id:"daini", label:"第2外国語（選択必修）", req:6},
+        ]},
+        {id:"sports", title:"スポーツ科目（2単位）", items:[
+          {id:"sports_all", label:"スポーツA・B", req:2},
+        ]},
+        {id:"senki_h", title:"専門基礎・必修（8単位）", items:[
+          {id:"senki_hissu", label:"専門基礎科目必修", req:8},
+        ]},
+        {id:"senki_s", title:"専門基礎・選択必修（8単位）", items:[
+          {id:"senki_sentaku", label:"専門基礎科目選択必修", req:8},
+        ]},
+        {id:"gakka", title:"学科所属科目（22単位）", items:[
+          {id:"gakka_all", label:"会計学科所属科目", req:22},
+        ]},
+        {id:"course_sp", title:"コース専門科目（18単位）", items:[
+          {id:"course_all", label:"コース専門科目（アカウンティング・会計専門職から）", req:18},
+        ]},
+        {id:"senmon_s", title:"専門選択科目（18単位）", items:[
+          {id:"senmon_all", label:"専門選択・ゼミナール・卒業論文", req:18},
+        ]},
+        {id:"jiyu", title:"自由選択（12単位）", items:[
+          {id:"jiyu_all", label:"自由選択", req:12},
+        ]},
+      ]
+    },
   },
 
   // ─────────────────────────────
@@ -1170,7 +1422,16 @@ function getVal(id) { return parseInt(state[id] || 0) || 0; }
 function getConfig() {
   const faculty = document.getElementById('faculty').value;
   const year = parseInt(document.getElementById('entryYear').value);
-  const req = REQS[faculty] && REQS[faculty][year] ? REQS[faculty][year] : REQS[faculty][2022];
+  const facCfg = REQS[faculty];
+  // Try exact year, then fall back to nearest lower year in config
+  let req = facCfg[year];
+  if (!req) {
+    const years = Object.keys(facCfg).map(Number).sort((a,b) => b-a);
+    for (const y of years) {
+      if (y <= year) { req = facCfg[y]; break; }
+    }
+    if (!req) req = facCfg[years[years.length-1]];
+  }
   return { faculty, year, req };
 }
 
